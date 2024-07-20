@@ -1,2 +1,13 @@
 # randomon
-Loads a random pokemon in a flutter app
+PokemonAPI in Flutter
+
+## Resources
+
+- https://pub.dev/packages/cached_network_image
+- https://www.youtube.com/watch?v=yLtpMqvMgdY
+- https://dart-tutorial.com/dart-how-to/generate-random-number-in-dart/
+- https://pokeapi.co/docs/v2
+
+
+`./android/app/src/main/AndroidManifest.xml`
+add `<uses-permission android:name="android.permission.INTERNET"/>`
