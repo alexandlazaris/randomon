@@ -7,7 +7,12 @@ PokemonAPI in Flutter
 - https://www.youtube.com/watch?v=yLtpMqvMgdY
 - https://dart-tutorial.com/dart-how-to/generate-random-number-in-dart/
 - https://pokeapi.co/docs/v2
+- https://github.com/flutter/flutter/blob/master/.gitignore
+* https://shorebird.dev/
 
 
-`./android/app/src/main/AndroidManifest.xml`
-add `<uses-permission android:name="android.permission.INTERNET"/>`
+## Issues
+
+### No internet permission
+In `./android/app/src/main/AndroidManifest.xml`
+, add `<uses-permission android:name="android.permission.INTERNET"/>` to allow release builds to use internet on device.
