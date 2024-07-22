@@ -5,14 +5,14 @@ import '../models/pokemon.dart';
 
 class PokemonService {
   Random random = new Random();
-  static const BASE_URL = 'https://pokeapi.co/api/v2/pokemon';
+  static const baseUrl = 'https://pokeapi.co/api/v2/pokemon';
 
   PokemonService();
 
-  Future<Pokemon> getPokemonById(int id) async {
-    int randomNumber = random.nextInt(400) + 1;
+  Future<Pokemon> getPokemonById() async {
+    int randomNumber = random.nextInt(151) + 1;
 
-    final response = await http.get(Uri.parse(('$BASE_URL/$randomNumber')));
+    final response = await http.get(Uri.parse(('$baseUrl/$randomNumber')));
     if (response.statusCode == 200) {
       return Pokemon.fromJson(jsonDecode(response.body));
     } else {

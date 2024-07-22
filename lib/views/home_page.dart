@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:randomon/models/pokemon.dart';
 import 'package:randomon/services/pokemon_service.dart';
@@ -20,7 +22,7 @@ class _HomePageState extends State<HomePage> {
 
   _getPokemon() async {
     try {
-      final pokemon = await _pokemonService.getPokemonById(1);
+      var pokemon = await _pokemonService.getPokemonById();
       setState(() {
         _pokemon = pokemon;
         switch (pokemon.types?[0]) {
@@ -34,10 +36,10 @@ class _HomePageState extends State<HomePage> {
             color = Colors.purpleAccent;
             break;
           case "ground":
-            color = Colors.brown;
+            color = const Color.fromARGB(255, 174, 122, 104);
             break;
           case "rock":
-            color = Colors.brown;
+            color = const Color.fromARGB(255, 82, 48, 35);
             break;
           case "fire":
             color = Colors.redAccent;
@@ -60,6 +62,9 @@ class _HomePageState extends State<HomePage> {
           case "normal":
             color = Colors.white;
             break;
+          case "flying":
+            color = Color.fromARGB(255, 195, 252, 255);
+            break;
           case "fighting":
             color = Colors.deepOrangeAccent;
             break;
@@ -71,6 +76,9 @@ class _HomePageState extends State<HomePage> {
             break;
           case "dark":
             color = Colors.black;
+            break;
+          case "electric":
+            color = Colors.yellowAccent;
             break;
         }
       });
@@ -96,7 +104,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             //TODO: handle loading data, takes ~1.5seconds
             Text(
-              (_pokemon?.name).toString(),
+              (_pokemon?.name).toString().toUpperCase(),
               style: const TextStyle(fontSize: 50),
             ),
             Text((_pokemon?.id).toString()),
@@ -116,6 +124,14 @@ class _HomePageState extends State<HomePage> {
                   errorWidget: (context, url, error) =>
                       const Icon(Icons.question_mark),
                   fit: BoxFit.fill),
+            ),
+            const Padding(padding: EdgeInsets.all(10)),
+            IconButton(
+              icon: const Icon(Icons.autorenew),
+              iconSize: 30,
+              onPressed: () {
+                _getPokemon();
+              },
             )
           ],
           //TODO: add pokeball button to load another

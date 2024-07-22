@@ -3,6 +3,7 @@ class Pokemon {
   final String? name;
   final List<String>? types;
   final String? spriteUrl;
+
   //TODO: add base stat total
   //TODO: add switch case to extract types and create coloured boxes for each type found
   //TODO: find out why app doesn't make API call on device
