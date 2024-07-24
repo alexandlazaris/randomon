@@ -8,8 +8,9 @@ PokemonAPI in Flutter
 - https://dart-tutorial.com/dart-how-to/generate-random-number-in-dart/
 - https://pokeapi.co/docs/v2
 - https://github.com/flutter/flutter/blob/master/.gitignore
-* https://shorebird.dev/
-
+- https://shorebird.dev/
+- https://api.flutter.dev/flutter/material/Icons-class.html
+- https://github.com/semantic-release/semantic-release/issues/2469
 
 ## Issues
 
