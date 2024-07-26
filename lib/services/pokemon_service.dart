@@ -9,10 +9,15 @@ class PokemonService {
 
   PokemonService();
 
-  Future<Pokemon> getPokemonById() async {
-    int randomNumber = random.nextInt(151) + 1;
-
+  Future<Pokemon> getPokemonById(int number) async {
+    // these random numbers are causing errors
+    // instead load a random number when the button is pressed?
+    // int randomNumber = random.nextInt(300) + 1;
+    var randomNumber = Random().nextInt(300) + 1;
     final response = await http.get(Uri.parse(('$baseUrl/$randomNumber')));
+    // final response = await http.get(Uri.parse(('$baseUrl/3')));
+    // final response = await http.get(Uri.parse(('$baseUrl/$number')));
+    // await Future.delayed(const Duration(seconds: 1));
     if (response.statusCode == 200) {
       return Pokemon.fromJson(jsonDecode(response.body));
     } else {

@@ -11,6 +11,7 @@ PokemonAPI in Flutter
 - https://shorebird.dev/
 - https://api.flutter.dev/flutter/material/Icons-class.html
 - https://github.com/semantic-release/semantic-release/issues/2469
+- https://stackoverflow.com/questions/47423297/how-can-i-add-a-border-to-a-widget-in-flutter
 
 ## Issues
 
