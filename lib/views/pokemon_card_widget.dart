@@ -29,9 +29,9 @@ class PokemonCard extends StatelessWidget {
       required this.colorType1,
       this.colorType2});
 
-  // double deviceHeight(BuildContext context) =>
-  //     MediaQuery.of(context).size.height;
-  // double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
+  double deviceHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+  double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,16 +40,21 @@ class PokemonCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.all(10),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                    border: Border.all(color: Colors.black, width: 1.0)),
-                child: Text(
-                  '$pokemonName #$pokemonId',
-                  style: const TextStyle(fontSize: 60),
+              Flexible(
+                child: Container(
+                  margin: EdgeInsets.only(
+                      top: deviceHeight(context) * 0.1, left: 10, right: 10),
+                  padding: const EdgeInsets.all(10),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: colorType1,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0)),
+                      border: Border.all(color: Colors.black, width: 1.0)),
+                  child: Text(
+                    '$pokemonName #$pokemonId',
+                    style: const TextStyle(fontSize: 30),
+                  ),
                 ),
               )
             ]),
@@ -80,6 +85,7 @@ class PokemonCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
+                width: 170,
                 margin: const EdgeInsets.all(10),
                 padding: const EdgeInsets.all(10),
                 alignment: Alignment.center,
@@ -89,23 +95,30 @@ class PokemonCard extends StatelessWidget {
                     border: Border.all(color: Colors.black, width: 1.0)),
                 child: Text(
                   '$type1',
-                  style: const TextStyle(fontSize: 30),
+                  style: const TextStyle(
+                    fontSize: 25,
+                  ),
                 ),
               ),
-              //how to make this widget optional
-              Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.all(10),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: colorType2,
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                    border: Border.all(color: Colors.black, width: 1.0)),
-                child: Text(
-                  '$type2',
-                  style: const TextStyle(fontSize: 30),
-                ),
-              )
+              if (type2 != "")
+                Container(
+                  // TODO: both type cards need decrease in width + have their text smaller
+                  width: 170,
+                  margin: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: colorType2,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0)),
+                      border: Border.all(color: Colors.black, width: 1.0)),
+                  child: Text(
+                    '$type2',
+                    style: const TextStyle(fontSize: 25),
+                  ),
+                )
+              else
+                const Visibility(visible: false, child: Scaffold())
             ]),
       ]),
     );

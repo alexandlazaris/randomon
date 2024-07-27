@@ -17,12 +17,8 @@ class Pokemon {
       required this.spriteUrl});
 
   factory Pokemon.fromJson(Map<String, dynamic> json) {
-    print(json['id']);
-    print(json['name'].toString().toUpperCase());
-    print(json['types'][0]['type']['name'].toString().toUpperCase());
     List<dynamic> types = json['types'];
     print(types.length);
-    var po;
     if (types.length == 1) {
       return Pokemon(
           id: json['id'].toString(),
@@ -43,14 +39,5 @@ class Pokemon {
               json['sprites']['other']['showdown']['front_default']);
     }
     throw Error();
-    // print(hasSecondType.isEmpty ? "is empty" : "not empty");
-    // return Pokemon(
-    //     id: json['id'].toString(),
-    //     name: json['name'].toString().toUpperCase(),
-    //     type1: json['types'][0]['type']['name'].toString().toUpperCase(),
-    //     type2: "",
-    //     spriteUrl: json['sprites']['versions']['generation-v']['black-white']
-    //             ['animated']['front_default'] ??
-    //         json['sprites']['other']['showdown']['front_default']);
   }
 }
