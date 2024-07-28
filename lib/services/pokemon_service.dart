@@ -10,8 +10,12 @@ class PokemonService {
   PokemonService();
 
   Future<Pokemon> getPokemonById(int number) async {
-    var randomNumber = Random().nextInt(500) + 1;
+    /* up to and including GENIV
+    source: https://bulbapedia.bulbagarden.net/wiki/Generation
+    */
+    var randomNumber = Random().nextInt(493) + 1;
     final response = await http.get(Uri.parse(('$baseUrl/$randomNumber')));
+    // final response = await http.get(Uri.parse(('$baseUrl/487')));
     if (response.statusCode == 200) {
       return Pokemon.fromJson(jsonDecode(response.body));
     } else {

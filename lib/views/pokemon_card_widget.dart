@@ -34,65 +34,63 @@ class PokemonCard extends StatelessWidget {
   double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(children: [
-        Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Container(
-                  margin: EdgeInsets.only(
-                      top: deviceHeight(context) * 0.1, left: 10, right: 10),
-                  padding: const EdgeInsets.all(10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: colorType1,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
-                      border: Border.all(color: Colors.black, width: 1.0)),
-                  child: Text(
-                    '$pokemonName #$pokemonId',
-                    style: const TextStyle(fontSize: 30),
-                  ),
+    return Column(children: [
+      Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.only(
+                  top: deviceHeight(context) * 0.1, left: 10, right: 10),
+              padding: const EdgeInsets.all(10),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  color: colorType1,
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  border: Border.all(color: Colors.black, width: 1.0)),
+              child: FittedBox(
+                child: Text(
+                  '$pokemonName #$pokemonId',
+                  style: const TextStyle(fontSize: 25),
                 ),
-              )
-            ]),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.all(10),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 1.0)),
-                child: SizedBox(
-                    height: 150,
-                    width: 150,
-                    child: CachedNetworkImage(
-                        imageUrl: '$pokemonSpriteUrl',
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.question_mark),
-                        fit: BoxFit.fill)),
-              )
-            ]),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 170,
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.all(10),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: colorType1,
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                    border: Border.all(color: Colors.black, width: 1.0)),
+              ),
+            )
+          ]),
+      Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              margin: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
+              alignment: Alignment.center,
+              child: SizedBox(
+                  height: 150,
+                  width: 150,
+                  child: CachedNetworkImage(
+                      imageUrl: '$pokemonSpriteUrl',
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.question_mark),
+                      fit: BoxFit.fill)),
+            )
+          ]),
+      Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 150,
+              height: 50,
+              margin: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  color: colorType1,
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  border: Border.all(color: Colors.black, width: 1.0)),
+              child: FittedBox(
                 child: Text(
                   '$type1',
                   style: const TextStyle(
@@ -100,27 +98,29 @@ class PokemonCard extends StatelessWidget {
                   ),
                 ),
               ),
-              if (type2 != "")
-                Container(
-                  // TODO: both type cards need decrease in width + have their text smaller
-                  width: 170,
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: colorType2,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
-                      border: Border.all(color: Colors.black, width: 1.0)),
+            ),
+            if (type2 != "")
+              Container(
+                // TODO: both type cards need decrease in width + have their text smaller
+                width: 150,
+                height: 50,
+                margin: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: colorType2,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                    border: Border.all(color: Colors.black, width: 1.0)),
+                child: FittedBox(
                   child: Text(
                     '$type2',
                     style: const TextStyle(fontSize: 25),
                   ),
-                )
-              else
-                const Visibility(visible: false, child: Scaffold())
-            ]),
-      ]),
-    );
+                ),
+              )
+            else
+              const Visibility(visible: false, child: Scaffold())
+          ]),
+    ]);
   }
 }

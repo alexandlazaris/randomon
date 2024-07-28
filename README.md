@@ -19,10 +19,13 @@ PokemonAPI in Flutter
 - https://stackoverflow.com/questions/43928702/how-to-change-the-application-launcher-icon-on-flutter
 - https://pub.dev/packages/flutter_launcher_icons
 - https://docs.flutter.dev/cookbook/navigation/passing-data
+- 
+- 
 
 ## Resources
 
 - pokeball icon - <a href="https://www.flaticon.com/free-icons/pokemon" title="pokemon icons">Pokemon icons created by Those Icons - Flaticon</a>
+- retry icon - <a href="https://www.flaticon.com/free-icons/refresh" title="refresh icons">Refresh icons created by Freepik - Flaticon</a>
 
 
 ## Issues
@@ -30,3 +33,5 @@ PokemonAPI in Flutter
 ### No internet permission
 In `./android/app/src/main/AndroidManifest.xml`
 , add `<uses-permission android:name="android.permission.INTERNET"/>` to allow release builds to use internet on device.
+
+flutter pub run flutter_launcher_icons
