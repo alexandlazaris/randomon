@@ -1,36 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:randomon/models/pokemon.dart';
 import 'package:randomon/services/pokemon_service.dart';
+import 'package:randomon/views/debug_page.dart';
+import 'package:randomon/globals/variables.dart';
 import 'pokemon_card_widget.dart';
-// not the best bounce effect, but it will do for now
-import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import 'party_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   final _pokemonService = PokemonService();
-  int numberOfPokemonLoaded = 0;
   Pokemon? _pokemon;
-  bool _loading = true;
+  bool showCard = false;
+  bool showReload = false;
+  bool showLoading = false;
+  bool showPokeballPlaceholder = false;
   Color colorForPokemonType = Colors.white;
   Color type1 = Colors.white;
   Color type2 = Colors.white;
   List<Color> colors = [];
-  Color appBarColor = Color.fromARGB(255, 161, 166, 167);
-  Color bgColor = const Color.fromARGB(255, 115, 115, 115);
+  Color appBarColor = Color.fromARGB(255, 255, 97, 97);
+  Color bgColor = Color.fromARGB(255, 255, 255, 255);
+  double deviceHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+  double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
+  String _catchToastMsg = "";
 
   _getPokemon() async {
     try {
-      _loading = false;
-      // TODO: how to get a callback(?) or trigger when this function has been completed
-      var pokemon = await _pokemonService.getPokemonById(2);
-      numberOfPokemonLoaded++;
+      showLoading = true;
+      showReload = false;
+      showPokeballPlaceholder = true;
+      var pokemon = await _pokemonService.getPokemonById();
+      totalNumberOfPokemonLoaded++;
       setState(() {
         _pokemon = pokemon;
         List<String>? listOfTypes = [pokemon.type1!, pokemon.type2!];
@@ -98,7 +104,10 @@ class _HomePageState extends State<HomePage> {
           print('adding colour $colorForPokemonType for type $value');
           colors.add(colorForPokemonType);
         });
-        _loading = true;
+        showLoading = false;
+        showCard = true;
+        showReload = true;
+        showPokeballPlaceholder = false;
       });
     } catch (e) {
       print('Error when fetching pokemon data: ${e}');
@@ -111,132 +120,175 @@ class _HomePageState extends State<HomePage> {
     _getPokemon();
   }
 
+/*
+  [ 
+    { "id: 1", "name: "Whiscash"},
+    { "id: 2", "name: "Shelgon"},
+    { "id: 3", "name: "Shelgon"}.
+  ]
+*/
+  checkIfPokemonAlreadyCaught(Pokemon pokemon) {
+    if (listOfPokemon.isNotEmpty) {
+      print('list is not empty');
+      if (listOfPokemon.contains(pokemon)) {
+        print('list already contains ${pokemon.name}');
+        cannotCatch(pokemon);
+      }
+      if (!listOfPokemon.contains(pokemon)) {
+        print('list does not contain ${pokemon.name}');
+        addNewPokemon(pokemon);
+      }
+    }
+    if (listOfPokemon.isEmpty) {
+      print('list is empty');
+      addNewPokemon(pokemon);
+    }
+  }
+
+  cannotCatch(Pokemon pokemon) {
+    print('already caught ${pokemon.name}');
+    _catchToastMsg = 'You already caught ${pokemon.name}.';
+  }
+
+  addNewPokemon(Pokemon pokemon) {
+    listOfPokemon.add(_pokemon!);
+    totalNumberOfPokemonCaught++;
+    print('newly caught $pokemon');
+    _catchToastMsg = 'Nice! ${pokemon.name} has been added to your party.';
+  }
+
+  setToastMessageText(String text) {
+    return text;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
           title: const Text(
-            "Find your Pokemon",
+            "Choose your Pokemon!",
             style: TextStyle(color: Colors.black),
           ),
           leading: IconButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(
-              builder: (context) {
-                return SecondPage(
-                    pokemonName: _pokemon?.name,
-                    loadedCount: numberOfPokemonLoaded);
-              },
-            )),
-            icon: Icon(Icons.settings_sharp, size: 30),
+            onPressed: () =>
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const DebugPage();
+            })),
+            icon: const Icon(Icons.settings_sharp, size: 30),
           ),
           backgroundColor: appBarColor,
         ),
         bottomNavigationBar: Container(
           color: appBarColor,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(
                 color: Colors.white,
-                onPressed: () => Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return SecondPage(
-                        pokemonName: _pokemon?.name,
-                        loadedCount: numberOfPokemonLoaded);
-                  },
-                )),
-                icon: const Icon(Icons.settings_sharp, size: 30),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return PartyPage();
+                  }));
+                },
+                icon: Image.asset(
+                  'assets/icons/hat.png',
+                  height: 50,
+                  width: 50,
+                ),
               ),
             ],
           ),
         ),
         body: Column(children: [
-          //TODO: stop loading skeleton UI once loaded
-          PokemonCard(
-              pokemonName: _pokemon?.name.toString(),
-              pokemonId: _pokemon?.id,
-              pokemonSpriteUrl: _pokemon?.spriteUrl,
-              type1: _pokemon?.type1,
-              colorType1: type1,
-              type2: _pokemon?.type2,
-              colorType2: type2),
+          Visibility(
+              visible: showLoading,
+              child: Container(
+                  margin: const EdgeInsets.only(top: 100),
+                  height: 100,
+                  width: 100,
+                  child: const Image(
+                      image: AssetImage('assets/icons/pokeball.png')))),
+          Visibility(
+            visible: showCard,
+            child: Container(
+              margin: EdgeInsets.only(
+                  top: deviceHeight(context) * 0.1, left: 10, right: 10),
+              padding: const EdgeInsets.all(10),
+              child: PokemonCard(
+                  pokemonName: _pokemon?.name,
+                  pokemonId: _pokemon?.id,
+                  pokemonSpriteUrl: _pokemon?.spriteUrl,
+                  type1: _pokemon?.type1,
+                  colorType1: type1,
+                  type2: _pokemon?.type2,
+                  colorType2: type2),
+            ),
+          ),
           Container(
             padding: const EdgeInsets.only(top: 100),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                IconButton(
-                  splashRadius: 100,
-                  onPressed: () {
-                    // TODO: show a loading indicator here when fetching pokemon data
-                    print("load new pokemon");
-                    _getPokemon();
-                  },
-                  icon: Image.asset(
-                    'assets/icons/circular-arrow.png',
-                    color: appBarColor,
-                    height: 50,
-                    width: 50,
+                Visibility(
+                  visible: showReload,
+                  child: IconButton(
+                    splashRadius: 100,
+                    onPressed: () {
+                      print("load new pokemon pressed");
+                      _getPokemon();
+                      showCard = false;
+                      setState(() {});
+                    },
+                    icon: Image.asset(
+                      'assets/icons/circular-arrow.png',
+                      color: appBarColor,
+                      height: 50,
+                      width: 50,
+                    ),
                   ),
                 ),
-                SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: Bounceable(
-                    duration: const Duration(milliseconds: 500),
-                    reverseDuration: const Duration(milliseconds: 500),
-                    scaleFactor: 0.1,
-                    curve: Curves.bounceIn,
-                    reverseCurve: Curves.bounceOut,
-                    onTap: () {
-                      print("bounce");
+                Visibility(
+                  visible: showReload,
+                  child: IconButton(
+                    splashRadius: 100,
+                    onPressed: () {
+                      checkIfPokemonAlreadyCaught(_pokemon!);
+                      // addNewPokemon(_pokemon!);
+                      setToastMessageText(_catchToastMsg);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        showCloseIcon: true,
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: const Color.fromARGB(255, 93, 25, 20),
+                        content: Text(_catchToastMsg),
+                      ));
+                      // someWidgetKey.currentState?.addNewPokemon(_pokemon!);
+                      // someWidgetKey.currentState?.counterAdd();
+                      // print(
+                      //     'from home page, counter is: ${someWidgetKey.currentState?.getCounter()}');
                     },
-                    child: IconButton(
-                        icon: Image.asset(
-                          'assets/icons/pokeball.png',
-                          height: 75,
-                          width: 75,
-                        ),
-                        splashRadius: 100,
-                        onPressed: () {
-                          //TODO: add FX when pokemon is caught
-                          //TODO: add current pokemon to a caught (liked) list
-                        }),
+                    icon: Image.asset(
+                      'assets/icons/pokeball.png',
+                      height: 50,
+                      width: 50,
+                    ),
                   ),
+                ),
+                Visibility(
+                  visible: showPokeballPlaceholder,
+                  child: const SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: Text(
+                        "loading ... ",
+                        textAlign: TextAlign.center,
+                      )),
                 ),
               ],
             ),
           ),
         ]));
-  }
-}
-
-class SecondPage extends StatelessWidget {
-  const SecondPage(
-      {super.key, required this.pokemonName, required this.loadedCount});
-
-  final String? pokemonName;
-  final int loadedCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Debug page",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.blueGrey,
-      ),
-      body: ListView(
-        children: [
-          Text('latest pokemon: $pokemonName'),
-          Text('number of pokemon loaded: $loadedCount')
-        ],
-      ),
-    );
   }
 }

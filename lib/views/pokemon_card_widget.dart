@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
-/* below was causing below errors:
-The following ImageCodecException was thrown resolving an image codec:
-Failed to detect image file format using the file header.
-File header was [0x3c 0x21 0x44 0x4f 0x43 0x54 0x59 0x50 0x45 0x20].
-Image source: encoded image bytes
-Image provider: NetworkImage("null", scale: 1.0)
-Image key: NetworkImage("null", scale: 1.0)
-*/
 import 'package:cached_network_image/cached_network_image.dart';
 
 class PokemonCard extends StatelessWidget {
   final String? pokemonId;
   final String? pokemonName;
-  // final List<String>? pokemonTypes;
   final String? type1;
   final String? type2;
   final String? pokemonSpriteUrl;
@@ -32,6 +23,7 @@ class PokemonCard extends StatelessWidget {
   double deviceHeight(BuildContext context) =>
       MediaQuery.of(context).size.height;
   double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -40,18 +32,18 @@ class PokemonCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              margin: EdgeInsets.only(
-                  top: deviceHeight(context) * 0.1, left: 10, right: 10),
-              padding: const EdgeInsets.all(10),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: colorType1,
                   borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   border: Border.all(color: Colors.black, width: 1.0)),
               child: FittedBox(
-                child: Text(
-                  '$pokemonName #$pokemonId',
-                  style: const TextStyle(fontSize: 25),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    '$pokemonName #$pokemonId',
+                    style: const TextStyle(fontSize: 25),
+                  ),
                 ),
               ),
             )
@@ -61,19 +53,15 @@ class PokemonCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              margin: const EdgeInsets.all(10),
-              padding: const EdgeInsets.all(10),
               alignment: Alignment.center,
               child: SizedBox(
                   height: 150,
                   width: 150,
                   child: CachedNetworkImage(
                       imageUrl: '$pokemonSpriteUrl',
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
                       errorWidget: (context, url, error) =>
                           const Icon(Icons.question_mark),
-                      fit: BoxFit.fill)),
+                      fit: BoxFit.contain)),
             )
           ]),
       Row(
@@ -101,7 +89,6 @@ class PokemonCard extends StatelessWidget {
             ),
             if (type2 != "")
               Container(
-                // TODO: both type cards need decrease in width + have their text smaller
                 width: 150,
                 height: 50,
                 margin: const EdgeInsets.all(10),
