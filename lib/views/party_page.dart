@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:randomon/models/pokemon.dart';
 import 'package:randomon/views/pokemon_card_widget.dart';
 import 'package:randomon/globals/variables.dart';
@@ -13,81 +12,17 @@ class PartyPage extends StatefulWidget {
 }
 
 class PartyPageState extends State<PartyPage> {
-  final Color _appBarColor = const Color.fromARGB(255, 255, 97, 97);
-  final Color _bgColor = const Color.fromARGB(255, 255, 255, 255);
-  final List<Color> _colors = [];
-  Color _colorForPokemonType = Colors.white;
+  List<Color> _colors = [];
   Color _type1 = Colors.white;
   Color _type2 = Colors.white;
-  int _counter = 0;
-
+  double deviceHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
   late PokemonCard x;
   createCard(Pokemon newPoke) {
     List<String>? listOfTypes = [newPoke.type1!, newPoke.type2!];
-    listOfTypes.asMap().forEach((index, value) {
-      print('type $index is $value');
-      //TODO: replace the below with enums
-      switch (value.toLowerCase()) {
-        case "grass":
-          _colorForPokemonType = Colors.green;
-          break;
-        case "bug":
-          _colorForPokemonType = Colors.lightGreenAccent;
-          break;
-        case "poison":
-          _colorForPokemonType = Colors.purpleAccent;
-          break;
-        case "ground":
-          _colorForPokemonType = const Color.fromARGB(255, 174, 122, 104);
-          break;
-        case "rock":
-          _colorForPokemonType = Color.fromARGB(255, 132, 106, 96);
-          break;
-        case "fire":
-          _colorForPokemonType = Colors.redAccent;
-          break;
-        case "water":
-          _colorForPokemonType = Colors.blueAccent;
-          break;
-        case "ice":
-          _colorForPokemonType = Colors.lightBlueAccent;
-          break;
-        case "psychic":
-          _colorForPokemonType = Colors.deepPurpleAccent;
-          break;
-        case "ghost":
-          _colorForPokemonType = Color.fromARGB(255, 94, 123, 127);
-          break;
-        case "dragon":
-          _colorForPokemonType = Colors.indigo;
-          break;
-        case "normal":
-          _colorForPokemonType = Colors.white;
-          break;
-        case "flying":
-          _colorForPokemonType = Color.fromARGB(255, 195, 252, 255);
-          break;
-        case "fighting":
-          _colorForPokemonType = Colors.deepOrangeAccent;
-          break;
-        case "fairy":
-          _colorForPokemonType = Colors.pinkAccent;
-          break;
-        case "steel":
-          _colorForPokemonType = Colors.grey;
-          break;
-        case "dark":
-          _colorForPokemonType = Colors.blueGrey;
-          break;
-        case "electric":
-          _colorForPokemonType = Colors.yellowAccent;
-          break;
-      }
-      if (index == 0) _type1 = _colorForPokemonType;
-      if (index == 1) _type2 = _colorForPokemonType;
-      print('adding colour $_colorForPokemonType for type $value');
-      _colors.add(_colorForPokemonType);
-    });
+    _colors = checkColour(listOfTypes);
+    _type1 = _colors[0];
+    _type2 = _colors[1];
     x = PokemonCard(
         pokemonId: newPoke.id,
         pokemonName: newPoke.name,
@@ -99,63 +34,110 @@ class PartyPageState extends State<PartyPage> {
     return x;
   }
 
-  addNewPokemon(Pokemon newPoke) {
-    _counter++;
-    setState(() {});
+  showDelete() {
+    if (caughtPokemonList.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  getCounter() {
-    print('from within getCounter(): $_counter');
-    return _counter;
-  }
-
-  void counterAdd() {
-    setState(() {
-      print('from within setState(): $_counter');
-      _counter = 10;
-    });
-    print('from within counterAdd(): $_counter');
+  showEmptyState() {
+    if (caughtPokemonList.isNotEmpty) {
+      return false;
+    } else if (caughtPokemonList.isEmpty) {
+      return true;
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    print('total list of pokemon: ${listOfPokemon.length}');
+    print('total list of pokemon: ${caughtPokemonList.length}');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: someWidgetKey,
-        backgroundColor: _bgColor,
-        appBar: AppBar(
-          title: const Text("Caught pokemon"),
-          backgroundColor: _appBarColor,
-          //TODO: add a delete all caught pokemon function here
-          //TODO: add a empty state widget
-        ),
-        body:
-            //     ListView(
-            //   padding: const EdgeInsets.all(8),
-            //   children: <Widget>[for (var item in listOfPokemon) createCard(item)],
-            // ),
-            ListView.builder(
-          padding: const EdgeInsets.all(8),
-          itemCount: listOfPokemon.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Column(
-              children: [
-                Container(
-                    height: 50,
-                    width: 50,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                            image:
-                                AssetImage('assets/icons/pokeball-open.png')))),
-                Container(child: createCard(listOfPokemon[index])),
-              ],
-            );
-          },
-        ));
+      key: someWidgetKey,
+      backgroundColor: bgColor,
+      appBar: AppBar(
+        title: Text('Party: ${caughtPokemonList.length}'),
+        backgroundColor: appBarColor,
+        actions: [
+          Visibility(
+            visible: showDelete(),
+            child: IconButton(
+              onPressed: () {
+                showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Release all Pokemon?'),
+                          content: const Text(
+                              'This will clear all caught Pokemon from this list.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Cancel'),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, 'OK');
+                                caughtPokemonList.clear();
+                                totalNumberOfPokemonCaught = 0;
+                                setState(() {});
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ));
+              },
+              icon: const Icon(Icons.delete),
+              iconSize: 40,
+            ),
+          )
+        ],
+      ),
+      body: Column(
+        children: [
+          Visibility(
+              visible: showEmptyState(),
+              child: Padding(
+                padding: EdgeInsets.only(top: deviceHeight(context) * 0.3),
+                child: const Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image(
+                          image: AssetImage('assets/icons/pokeball.png'),
+                          height: 30,
+                          width: 30),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("Go back to start catching Pokemon!"),
+                      ),
+                      Image(
+                          image: AssetImage('assets/icons/pokeball.png'),
+                          height: 30,
+                          width: 30),
+                    ],
+                  ),
+                ),
+              )),
+          Visibility(
+            visible: showDelete(),
+            child: SizedBox(
+              height: deviceHeight(context) * 0.85,
+              child: ListView(
+                padding: const EdgeInsets.all(8),
+                children: <Widget>[
+                  for (var item in caughtPokemonList) createCard(item)
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

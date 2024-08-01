@@ -1,5 +1,21 @@
 # randomon
-PokemonAPI in Flutter
+A speedrun of using Flutter and the PokemonAPI
+
+## Features
+- load pokemon from Gen I-IV
+- randomized each load
+- save to your party
+- clear party
+
+## Todo
+- expand learning into keys, providers, builders, state 
+management
+- add automated testing for widgets and interactions
+- tap individual pokemon to clear from list
+- add in loading skeleton when fetching data
+- maintain app data when closing/relaunching app
+- publish on mobile app stores
+
 
 ## Resources
 
@@ -31,10 +47,22 @@ PokemonAPI in Flutter
 - hat - <a href="https://www.flaticon.com/free-icons/ash" title="ash icons">Ash icons created by Shahzama Ahmad - Flaticon</a>
 
 
-## Issues
+## Known limitations
 
-### No internet permission
+- logic to check caught pokemon is not 100%. Duplicate pokemmon can be caught
+- other than gifs/images, all other network data is not cached
+
+## Performance
+- gifs/images are cached on device, enabling quicker rendering on subsequent loads
+
+## No internet permission
 In `./android/app/src/main/AndroidManifest.xml`
 , add `<uses-permission android:name="android.permission.INTERNET"/>` to allow release builds to use internet on device.
 
-flutter pub run flutter_launcher_icons
+## Produce app icons for platforms
+1. edit values in `pubspec.yaml` underneath `flutter_launcher_icons` & save
+2. run `flutter pub run flutter_launcher_icons`
+
+
+
+

@@ -20,11 +20,9 @@ class _HomePageState extends State<HomePage> {
   bool showLoading = false;
   bool showPokeballPlaceholder = false;
   Color colorForPokemonType = Colors.white;
-  Color type1 = Colors.white;
-  Color type2 = Colors.white;
-  List<Color> colors = [];
-  Color appBarColor = Color.fromARGB(255, 255, 97, 97);
-  Color bgColor = Color.fromARGB(255, 255, 255, 255);
+  Color _type1 = Colors.white;
+  Color _type2 = Colors.white;
+  List<Color> _colors = [];
   double deviceHeight(BuildContext context) =>
       MediaQuery.of(context).size.height;
   double deviceWidth(BuildContext context) => MediaQuery.of(context).size.width;
@@ -39,71 +37,10 @@ class _HomePageState extends State<HomePage> {
       totalNumberOfPokemonLoaded++;
       setState(() {
         _pokemon = pokemon;
-        List<String>? listOfTypes = [pokemon.type1!, pokemon.type2!];
-        listOfTypes.asMap().forEach((index, value) {
-          print('type $index is $value');
-          //TODO: replace the below with enums
-          switch (value.toLowerCase()) {
-            case "grass":
-              colorForPokemonType = Colors.green;
-              break;
-            case "bug":
-              colorForPokemonType = Colors.lightGreenAccent;
-              break;
-            case "poison":
-              colorForPokemonType = Colors.purpleAccent;
-              break;
-            case "ground":
-              colorForPokemonType = const Color.fromARGB(255, 174, 122, 104);
-              break;
-            case "rock":
-              colorForPokemonType = Color.fromARGB(255, 132, 106, 96);
-              break;
-            case "fire":
-              colorForPokemonType = Colors.redAccent;
-              break;
-            case "water":
-              colorForPokemonType = Colors.blueAccent;
-              break;
-            case "ice":
-              colorForPokemonType = Colors.lightBlueAccent;
-              break;
-            case "psychic":
-              colorForPokemonType = Colors.deepPurpleAccent;
-              break;
-            case "ghost":
-              colorForPokemonType = Color.fromARGB(255, 94, 123, 127);
-              break;
-            case "dragon":
-              colorForPokemonType = Colors.indigo;
-              break;
-            case "normal":
-              colorForPokemonType = Colors.white;
-              break;
-            case "flying":
-              colorForPokemonType = Color.fromARGB(255, 195, 252, 255);
-              break;
-            case "fighting":
-              colorForPokemonType = Colors.deepOrangeAccent;
-              break;
-            case "fairy":
-              colorForPokemonType = Colors.pinkAccent;
-              break;
-            case "steel":
-              colorForPokemonType = Colors.grey;
-              break;
-            case "dark":
-              colorForPokemonType = Colors.blueGrey;
-              break;
-            case "electric":
-              colorForPokemonType = Colors.yellowAccent;
-              break;
-          }
-          if (index == 0) type1 = colorForPokemonType;
-          if (index == 1) type2 = colorForPokemonType;
-          print('adding colour $colorForPokemonType for type $value');
-          colors.add(colorForPokemonType);
-        });
+        List<String>? listOfTypes = [_pokemon!.type1!, _pokemon!.type2!];
+        _colors = checkColour(listOfTypes);
+        _type1 = _colors[0];
+        _type2 = _colors[1];
         showLoading = false;
         showCard = true;
         showReload = true;
@@ -121,6 +58,7 @@ class _HomePageState extends State<HomePage> {
   }
 
 /*
+  TODO: Below check is faulty, need to improve
   [ 
     { "id: 1", "name: "Whiscash"},
     { "id: 2", "name: "Shelgon"},
@@ -128,18 +66,18 @@ class _HomePageState extends State<HomePage> {
   ]
 */
   checkIfPokemonAlreadyCaught(Pokemon pokemon) {
-    if (listOfPokemon.isNotEmpty) {
+    if (caughtPokemonList.isNotEmpty) {
       print('list is not empty');
-      if (listOfPokemon.contains(pokemon)) {
+      if (caughtPokemonList.contains(pokemon)) {
         print('list already contains ${pokemon.name}');
         cannotCatch(pokemon);
       }
-      if (!listOfPokemon.contains(pokemon)) {
+      if (!caughtPokemonList.contains(pokemon)) {
         print('list does not contain ${pokemon.name}');
         addNewPokemon(pokemon);
       }
     }
-    if (listOfPokemon.isEmpty) {
+    if (caughtPokemonList.isEmpty) {
       print('list is empty');
       addNewPokemon(pokemon);
     }
@@ -151,7 +89,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   addNewPokemon(Pokemon pokemon) {
-    listOfPokemon.add(_pokemon!);
+    caughtPokemonList.add(_pokemon!);
     totalNumberOfPokemonCaught++;
     print('newly caught $pokemon');
     _catchToastMsg = 'Nice! ${pokemon.name} has been added to your party.';
@@ -189,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return PartyPage();
+                    return const PartyPage();
                   }));
                 },
                 icon: Image.asset(
@@ -221,9 +159,9 @@ class _HomePageState extends State<HomePage> {
                   pokemonId: _pokemon?.id,
                   pokemonSpriteUrl: _pokemon?.spriteUrl,
                   type1: _pokemon?.type1,
-                  colorType1: type1,
+                  colorType1: _type1,
                   type2: _pokemon?.type2,
-                  colorType2: type2),
+                  colorType2: _type2),
             ),
           ),
           Container(
@@ -256,7 +194,6 @@ class _HomePageState extends State<HomePage> {
                     splashRadius: 100,
                     onPressed: () {
                       checkIfPokemonAlreadyCaught(_pokemon!);
-                      // addNewPokemon(_pokemon!);
                       setToastMessageText(_catchToastMsg);
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         showCloseIcon: true,
@@ -264,10 +201,6 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: const Color.fromARGB(255, 93, 25, 20),
                         content: Text(_catchToastMsg),
                       ));
-                      // someWidgetKey.currentState?.addNewPokemon(_pokemon!);
-                      // someWidgetKey.currentState?.counterAdd();
-                      // print(
-                      //     'from home page, counter is: ${someWidgetKey.currentState?.getCounter()}');
                     },
                     icon: Image.asset(
                       'assets/icons/pokeball.png',

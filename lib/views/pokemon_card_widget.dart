@@ -32,6 +32,7 @@ class PokemonCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
+              //TODO: alignment is wrong here, they are too much on the right
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: colorType1,
